@@ -13,7 +13,7 @@ pub struct EntityName {
 #[derive(Component)]
 pub struct Player {
 }
-
+    
 #[derive(Component)]
 pub struct Enemy {
 }
@@ -35,16 +35,13 @@ fn main() {
     .add_plugins(DefaultPlugins)
     .add_systems(Startup, setup_test)
     .add_systems(Update, main_loop::update)
+    .add_systems(Update, main_loop::update_player_pos)
+    .add_systems(Update, main_loop::update_cam_pos)
     .run();
 }
 
 fn setup_test(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
-
-    commands.spawn(SpriteBundle {
-        texture: asset_server.load("sprites/player.png"),
-        ..default()
-    });
 
     let mut i = 0;
     let radius: f32 = 200.0;
@@ -76,14 +73,13 @@ fn setup_test(mut commands: Commands, asset_server: Res<AssetServer>) {
         i += 1;
     }
 
-    commands.spawn(SpriteBundle {
-        texture: asset_server.load("sprites/player.png"),
-        ..default()
-    });
-
-    
     // Spawning player
     commands.spawn((
+        SpriteBundle {
+            texture: asset_server.load("sprites/player.png"),
+            transform: Transform::from_xyz(0.0, 0.0, 0.0),
+            ..default()
+        },
         Player {
 
         },
@@ -93,7 +89,7 @@ fn setup_test(mut commands: Commands, asset_server: Res<AssetServer>) {
         StatSheet {
             health: 10,
             damage: 2,
-            move_speed: 10.0,
+            move_speed: 100.0,
         }
     ));
 
